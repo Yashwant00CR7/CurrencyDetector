@@ -1,0 +1,26 @@
+<annotation>
+	<folder>train</folder>
+	<filename>10_original_IMG_20190422_124128706.jpg_64056af9-ad4c-4108-a42d-157869a61230 - Copy.jpg</filename>
+	<path>D:\Telegram Desktop\YOLO\dataset\images\train\10_original_IMG_20190422_124128706.jpg_64056af9-ad4c-4108-a42d-157869a61230 - Copy.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3006</width>
+		<height>5344</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Currency</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>161</xmin>
+			<ymin>1277</ymin>
+			<xmax>2189</xmax>
+			<ymax>5255</ymax>
+		</bndbox>
+	</object>
+</annotation>

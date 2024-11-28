@@ -1,0 +1,9 @@
+path: D:\Telegram Desktop\YOLO\dataset
+train: D:\Telegram Desktop\YOLO\dataset\images\train
+val: D:\Telegram Desktop\YOLO\dataset\images\val
+nc: 2
+
+names: ['Currency', 'Objects']
+
+augment: True
+

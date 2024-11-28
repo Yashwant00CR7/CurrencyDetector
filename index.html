@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Currency Detection</h1>
+        <p>Place the currency in front of the camera.</p>
+        <select id="languageSelector">
+            <option value="en">English</option>
+            <option value="ta">Tamil</option>
+        </select>                
+        <video id="webcam" autoplay></video>
+        <button id="captureBtn" class="capture-btn">Capture Image</button>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <p id="status"></p>
+        <div class="footer">
+            
+        </div>
+    </div>      
+    <script src="./script.js"></script>
+
+
+</body>
+
+</html>
