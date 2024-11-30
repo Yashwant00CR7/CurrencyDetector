@@ -108,6 +108,3 @@ This project demonstrates the potential of combining object detection and classi
 ### **License**
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-
-This README template covers essential sections such as the project overview, methodology, setup instructions, and usage. If you'd like to add more specific details, feel free to ask!
