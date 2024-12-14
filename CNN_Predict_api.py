@@ -50,7 +50,7 @@ class CentralFocusSpatialAttention(layers.Layer):
 
 # Load the model with custom layer
 with CustomObjectScope({'CentralFocusSpatialAttention': CentralFocusSpatialAttention}):
-    model = load_model('D:\Telegram Desktop\Webpage\Tensorflowjs Model\Currency_Detection_model_with_DenseNet121_and_CentralFocusSpatialAttention.h5')  # Path to your trained model
+    model = load_model('Currency_Detection_model_with_DenseNet121_and_CentralFocusSpatialAttention.h5')  # Path to your trained model
 
 INPUT_IMAGE_SIZE = (224, 224)  # Example: Resize images to 224x224
 
