@@ -66,7 +66,7 @@ sqlparse==0.5.3
 streamlit==1.42.0
 sympy==1.13.1
 tenacity==9.0.0
-tensorboard==2.18.0
+tensorboard
 tensorboard-data-server==0.7.2
 tensorflow-cpu==2.15.0  # Fixed version for stability
 tensorflow-io-gcs-filesystem==0.31.0
