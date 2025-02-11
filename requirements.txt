@@ -39,7 +39,7 @@ mdurl==0.1.2
 ml-dtypes==0.4.1
 mpmath==1.3.0
 networkx==3.4.2
-numpy  # Fixed version for TensorFlow compatibility
+numpy==1.23.5  # Fixed version for TensorFlow compatibility
 opencv-python-headless==4.7.0.72  # Headless OpenCV for Streamlit Cloud
 opt_einsum==3.4.0
 packaging==24.2
