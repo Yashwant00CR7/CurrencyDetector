@@ -72,7 +72,7 @@ tensorflow-cpu==2.15.0  # Fixed version for stability
 tensorflow-io-gcs-filesystem==0.31.0
 termcolor==2.5.0
 toml==0.10.2
-torch==2.5.1
+torch
 torchvision==0.18.0  # Ensured compatibility with ultralytics
 tornado==6.4.2
 tqdm==4.67.1
