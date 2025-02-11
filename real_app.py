@@ -7,10 +7,10 @@ import numpy as np
 import base64
 from io import BytesIO
 from PIL import Image
-import pyttsx3
 import threading
 import os
 import sys
+from gtts import gTTS  # Google Text-to-Speech
 
 # Define class names for CNN (Ensure they match the order in your trained model)
 cnn_classes = ['10 Rupees', '100 Rupees', '20 Rupees', '200 Rupees', '50 Rupees', '500 Rupees']
@@ -44,13 +44,19 @@ start_flask_api("CNN_Predict_api.py", 5001)
 
 st.success("Flask APIs are running!")
 
-# Initialize Text-to-Speech
-engine = pyttsx3.init()
-engine.setProperty('rate', 150)
-
+# Function to convert text to speech using gTTS
 def speak(text):
-    engine.say(text)
-    engine.runAndWait()
+    try:
+        tts = gTTS(text=text, lang="en")
+        tts.save("speech.mp3")
+
+        # Play the MP3 file (Compatible with Windows, Linux, Mac)
+        if os.name == "nt":
+            os.system("start speech.mp3")  # Windows
+        else:
+            os.system("mpg321 speech.mp3")  # Linux/Mac
+    except Exception as e:
+        st.error(f"Speech synthesis error: {str(e)}")
 
 # Encode image to Base64
 def encode_image(image):
