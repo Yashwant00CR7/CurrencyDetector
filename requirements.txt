@@ -1,5 +1,5 @@
 absl-py==2.1.0
-altair
+altair==4.2.2
 asgiref==3.8.1
 astunparse==1.6.3
 attrs==25.1.0
