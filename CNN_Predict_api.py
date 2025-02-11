@@ -4,15 +4,16 @@ from PIL import Image
 import io
 import numpy as np
 from flask_cors import CORS
-from tensorflow.keras.models import load_model
+from tensorflow.keras.models import load_model, model_from_json
 from tensorflow.keras import layers
 from tensorflow.keras.utils import CustomObjectScope
 import tensorflow as tf
+import os
 
 app = Flask(__name__)
-CORS(app, resources={r"/predict": {"origins": "*"}})  # Allow CORS only on the '/predict' endpoint
+CORS(app, resources={r"/predict": {"origins": "*"}})  # Allow CORS only on '/predict'
 
-# Define your class names
+# Define class names
 classes_name = ['10 Rupees', '100 Rupees', '20 Rupees', '200 Rupees', '50 Rupees', '500 Rupees']
 
 class CentralFocusSpatialAttention(layers.Layer):
@@ -48,14 +49,54 @@ class CentralFocusSpatialAttention(layers.Layer):
         attention_weighted = attention * gaussian_mask
         return inputs * (1 + self.gamma * attention_weighted)
 
-# Load the model with custom layer
-with CustomObjectScope({'CentralFocusSpatialAttention': CentralFocusSpatialAttention}):
-    model = load_model('Currency_Detection_model_with_DenseNet121_and_CentralFocusSpatialAttention.h5',compile=False)  # Path to your trained model
+# ✅ Load Model with Safe Handling (Fixing Keras 3.x Issues)
+model_path = "Currency_Detection_model_with_DenseNet121_and_CentralFocusSpatialAttention.h5"
+json_model_path = "new_model.json"
+weights_path = "new_model_weights.h5"
+
+def rebuild_model():
+    """Converts old model format to a Keras 3.x compatible model"""
+    print("🔄 Rebuilding model to remove batch_shape issue...")
+    old_model = load_model(model_path, compile=False)
+
+    # Save model as JSON
+    model_json = old_model.to_json()
+    with open(json_model_path, "w") as json_file:
+        json_file.write(model_json)
+
+    # Save model weights separately
+    old_model.save_weights(weights_path)
+
+    # Load the model again without batch_shape
+    with open(json_model_path, "r") as json_file:
+        new_model_json = json_file.read()
+
+    new_model = model_from_json(new_model_json, custom_objects={'CentralFocusSpatialAttention': CentralFocusSpatialAttention})
+    new_model.load_weights(weights_path)
+    new_model.save(model_path)  # Overwrite old model with new format
+    print("✅ Model successfully rebuilt!")
+
+# Check if the model exists before loading
+if not os.path.exists(model_path):
+    raise FileNotFoundError(f"Model file not found: {model_path}")
+
+try:
+    with CustomObjectScope({'CentralFocusSpatialAttention': CentralFocusSpatialAttention}):
+        model = load_model(model_path, compile=False)  # Prevents compilation issues in Keras 3.x
+    print("✅ Model loaded successfully!")
+except ValueError as e:
+    if "Unrecognized keyword arguments: ['batch_shape']" in str(e):
+        rebuild_model()
+        with CustomObjectScope({'CentralFocusSpatialAttention': CentralFocusSpatialAttention}):
+            model = load_model(model_path, compile=False)
+    else:
+        raise RuntimeError(f"Error loading model: {str(e)}")
 
 INPUT_IMAGE_SIZE = (224, 224)  # Example: Resize images to 224x224
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    """Handles prediction requests from clients."""
     data = request.get_json()
     images = data.get('images', [])
 
@@ -65,10 +106,13 @@ def predict():
     try:
         predictions = []
         for img_str in images:
-            img_data = base64.b64decode(img_str.split(',')[1])  # Remove 'data:image/jpeg;base64,'
-            img = Image.open(io.BytesIO(img_data)).convert('RGB')
+            try:
+                img_data = base64.b64decode(img_str.split(',')[1])  # Remove 'data:image/jpeg;base64,'
+                img = Image.open(io.BytesIO(img_data)).convert('RGB')
+            except Exception as e:
+                return jsonify({'error': f"Error decoding image: {str(e)}"}), 400
 
-            # Preprocess the image (resize and normalize as per your model requirements)
+            # Preprocess image
             img = img.resize(INPUT_IMAGE_SIZE)
             img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
             img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
@@ -79,13 +123,13 @@ def predict():
 
         # Calculate the average prediction
         avg_prediction = np.mean(predictions, axis=0)
-        highest_class = np.argmax(avg_prediction)  # Get the index of the highest probability
-        highest_score = avg_prediction[highest_class]  # Get the highest probability score
+        highest_class = np.argmax(avg_prediction)  # Get index of highest probability
+        highest_score = avg_prediction[highest_class]  # Get highest probability score
 
         # Convert score to percentage
         highest_score_percentage = highest_score * 100
 
-        # Map the index to the class name
+        # Map index to class name
         highest_class_name = classes_name[highest_class]
 
         return jsonify({
@@ -95,10 +139,7 @@ def predict():
         })
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': f"Internal server error: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    import os
-    debug_mode = os.environ.get('FLASK_DEBUG', '0') == '1'  # Check if FLASK_DEBUG is set to 1
-    app.run(host='0.0.0.0', port=5001, debug=debug_mode)
-
+    app.run(host='0.0.0.0', port=5001, debug=True)  # Allows running on cloud
