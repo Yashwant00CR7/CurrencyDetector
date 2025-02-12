@@ -21,7 +21,7 @@ gtts
 gitdb
 GitPython
 google-pasta
-grpcio==1.60.0  # Fixed for TensorFlow 2.18
+grpcio==1.60.0  # ✅ Fixed for TensorFlow compatibility
 h5py
 idna
 image
@@ -29,7 +29,7 @@ itsdangerous
 Jinja2
 jsonschema
 jsonschema-specifications
-keras==3.7.0  # ✅ Updated to latest Keras 3.7 for TensorFlow 2.18
+keras==3.7.0  # ✅ Compatible with TensorFlow 2.15
 kiwisolver
 libclang
 Markdown
@@ -40,8 +40,8 @@ mdurl
 ml-dtypes
 mpmath
 networkx
-numpy>=1.23.5  # ✅ Ensures compatibility with TensorFlow 2.18
-opencv-python-headless  # Headless OpenCV for Streamlit Cloud
+numpy>=1.23.5  # ✅ Ensures compatibility with TensorFlow 2.15
+opencv-python-headless  # ✅ Headless OpenCV for Streamlit Cloud
 opt_einsum
 packaging
 pandas
@@ -69,7 +69,7 @@ sympy
 tenacity
 tensorboard
 tensorboard-data-server
-tensorflow-intel==2.18.0  # ✅ Updated to latest TensorFlow Intel 2.18
+tensorflow-cpu==2.15.0  # ✅ Best for Cloud Deployment
 tensorflow-io-gcs-filesystem
 termcolor
 toml
