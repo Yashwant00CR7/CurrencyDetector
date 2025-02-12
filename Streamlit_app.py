@@ -20,6 +20,7 @@ cnn_classes = ['10 Rupees', '100 Rupees', '20 Rupees', '200 Rupees', '50 Rupees'
 yolo_model = YOLO('runs/detect/train4/weights/best.pt')
 
 # **Step 3: Define Custom CNN Layer (For Loading Model)**
+@keras.saving.register_keras_serializable()
 class CentralFocusSpatialAttention(layers.Layer):
     def __init__(self, **kwargs):
         super(CentralFocusSpatialAttention, self).__init__(**kwargs)
