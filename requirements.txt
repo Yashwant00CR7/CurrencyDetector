@@ -29,7 +29,7 @@ itsdangerous
 Jinja2
 jsonschema
 jsonschema-specifications
-keras==3.7.0  # ✅ Compatible with TensorFlow 2.15
+keras==2.15.0  # ✅ Compatible with TensorFlow 2.15
 kiwisolver
 libclang
 Markdown
