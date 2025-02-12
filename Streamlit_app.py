@@ -1,6 +1,5 @@
 import streamlit as st
 import numpy as np
-import keras.saving
 import cv2
 import base64
 from io import BytesIO
@@ -13,6 +12,8 @@ from ultralytics import YOLO
 from gtts import gTTS
 import os
 import threading
+from keras.saving import register_keras_serializable  # ✅ Correct for Keras 2.x
+
 
 # **Step 1: Define Class Names for CNN**
 cnn_classes = ['10 Rupees', '100 Rupees', '20 Rupees', '200 Rupees', '50 Rupees', '500 Rupees']
