@@ -55,7 +55,7 @@ class CentralFocusSpatialAttention(layers.Layer):
 
 # **Step 4: Load CNN Model for Currency Classification**
 with CustomObjectScope({'CentralFocusSpatialAttention': CentralFocusSpatialAttention}):
-    cnn_model = load_model('Currency_Detection_model_with_DenseNet121_and_CentralFocusSpatialAttention.h5', compile=False)
+    cnn_model = load_model('New_Currency_Detection_Model.h5', compile=False)
 
 # **Step 5: Helper Functions**
 def encode_image(image):
