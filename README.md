@@ -4,6 +4,8 @@
 
 ### **Overview**
 In an effort to improve accessibility for visually impaired individuals, this project focuses on creating a **Currency Detection System** that leverages machine learning models to identify and classify currency notes in real-time. The system is designed to provide audio feedback, ensuring that visually impaired users can interact with their environment and receive clear, real-time updates about the currency they encounter.
+## [**DEMO**](https://indiancurrencydetector.streamlit.app/) ##
+We are Still optimizing the model for Object Detection and Currency Identification for frames with no Currency , So please use an Image Consisting of any Indian Currency to test this Model
 
 ### **Introduction**
 Currency detection has long been a challenge for the visually impaired community. This project addresses that need by developing an intelligent application that detects and classifies currency using real-time camera feed. The system makes use of cutting-edge technologies like **YOLO** for object detection and **Convolutional Neural Networks (CNNs)** for classification. Once a currency note is detected, the system announces the denomination via audio to the user, facilitating greater independence and financial accuracy.
