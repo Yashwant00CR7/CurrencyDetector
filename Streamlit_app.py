@@ -12,7 +12,8 @@ from ultralytics import YOLO
 from gtts import gTTS
 import os
 import threading
-from keras.utils import register_keras_serializable  # ✅ Correct for Keras 2.x # ✅ Correct for Keras 2
+from keras.utils import register_keras_serializable  
+from tensorflow.keras.utils import get_custom_objects# ✅ Correct for Keras 2.x # ✅ Correct for Keras 2
 
 # **Step 1: Define Class Names for CNN**
 cnn_classes = ['10 Rupees', '100 Rupees', '20 Rupees', '200 Rupees', '50 Rupees', '500 Rupees']
