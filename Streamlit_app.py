@@ -12,8 +12,7 @@ from ultralytics import YOLO
 from gtts import gTTS
 import os
 import threading
-from keras.saving import register_keras_serializable  # ✅ Correct for Keras 2.x
-
+from keras.utils import register_keras_serializable  # ✅ Correct for Keras 2.x # ✅ Correct for Keras 2
 
 # **Step 1: Define Class Names for CNN**
 cnn_classes = ['10 Rupees', '100 Rupees', '20 Rupees', '200 Rupees', '50 Rupees', '500 Rupees']
@@ -22,7 +21,7 @@ cnn_classes = ['10 Rupees', '100 Rupees', '20 Rupees', '200 Rupees', '50 Rupees'
 yolo_model = YOLO('runs/detect/train4/weights/best.pt')
 
 # **Step 3: Define Custom CNN Layer (For Loading Model)**
-@keras.saving.register_keras_serializable()
+@register_keras_serializable()
 class CentralFocusSpatialAttention(layers.Layer):
     def __init__(self, **kwargs):
         super(CentralFocusSpatialAttention, self).__init__(**kwargs)
