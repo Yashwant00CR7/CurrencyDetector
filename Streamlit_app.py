@@ -20,40 +20,40 @@ cnn_classes = ['10 Rupees', '100 Rupees', '20 Rupees', '200 Rupees', '50 Rupees'
 # **Step 2: Load YOLO Model for Currency Detection**
 yolo_model = YOLO('runs/detect/train4/weights/best.pt')
 
-# **Step 3: Define Custom CNN Layer (For Loading Model)**
-@register_keras_serializable()
-class CentralFocusSpatialAttention(layers.Layer):
-    def __init__(self, **kwargs):
-        super(CentralFocusSpatialAttention, self).__init__(**kwargs)
-        self.conv_attention = None
-        self.gamma = None
+if "CentralFocusSpatialAttention" not in get_custom_objects():
+  register_keras_serializable(package="Custom", name="CentralFocusSpatialAttention")# **Step 3: Define Custom CNN Layer (For Loading Model)**
+  class CentralFocusSpatialAttention(layers.Layer):
+      def __init__(self, **kwargs):
+          super(CentralFocusSpatialAttention, self).__init__(**kwargs)
+          self.conv_attention = None
+          self.gamma = None
 
-    def build(self, input_shape):
-        self.conv_attention = layers.Conv2D(1, (7, 7), padding='same', activation='sigmoid')
-        self.gamma = self.add_weight(name='gamma', shape=(), initializer='zeros', trainable=True)
-        super(CentralFocusSpatialAttention, self).build(input_shape)
+      def build(self, input_shape):
+          self.conv_attention = layers.Conv2D(1, (7, 7), padding='same', activation='sigmoid')
+          self.gamma = self.add_weight(name='gamma', shape=(), initializer='zeros', trainable=True)
+          super(CentralFocusSpatialAttention, self).build(input_shape)
 
-    def call(self, inputs):
-        avg_pool = tf.reduce_mean(inputs, axis=-1, keepdims=True)
-        max_pool = tf.reduce_max(inputs, axis=-1, keepdims=True)
-        concat = tf.concat([avg_pool, max_pool], axis=-1)
-        attention = self.conv_attention(concat)
+      def call(self, inputs):
+          avg_pool = tf.reduce_mean(inputs, axis=-1, keepdims=True)
+          max_pool = tf.reduce_max(inputs, axis=-1, keepdims=True)
+          concat = tf.concat([avg_pool, max_pool], axis=-1)
+          attention = self.conv_attention(concat)
 
-        height, width = inputs.shape[1], inputs.shape[2]
-        center_x, center_y = height // 2, width // 2
-        sigma = tf.cast(height / 4, tf.float32)
-        x = tf.range(0, height, dtype=tf.float32)
-        y = tf.range(0, width, dtype=tf.float32)
-        x_mask = tf.exp(-(x - center_x) ** 2 / (2 * sigma ** 2))
-        y_mask = tf.exp(-(y - center_y) ** 2 / (2 * sigma ** 2))
-        gaussian_mask = tf.tensordot(x_mask, y_mask, axes=0)
+          height, width = inputs.shape[1], inputs.shape[2]
+          center_x, center_y = height // 2, width // 2
+          sigma = tf.cast(height / 4, tf.float32)
+          x = tf.range(0, height, dtype=tf.float32)
+          y = tf.range(0, width, dtype=tf.float32)
+          x_mask = tf.exp(-(x - center_x) ** 2 / (2 * sigma ** 2))
+          y_mask = tf.exp(-(y - center_y) ** 2 / (2 * sigma ** 2))
+          gaussian_mask = tf.tensordot(x_mask, y_mask, axes=0)
 
-        gaussian_mask = tf.expand_dims(gaussian_mask, axis=-1)
-        gaussian_mask = tf.expand_dims(gaussian_mask, axis=0)
-        gaussian_mask = tf.cast(gaussian_mask, dtype=inputs.dtype)
+          gaussian_mask = tf.expand_dims(gaussian_mask, axis=-1)
+          gaussian_mask = tf.expand_dims(gaussian_mask, axis=0)
+          gaussian_mask = tf.cast(gaussian_mask, dtype=inputs.dtype)
 
-        attention_weighted = attention * gaussian_mask
-        return inputs * (1 + self.gamma * attention_weighted)
+          attention_weighted = attention * gaussian_mask
+          return inputs * (1 + self.gamma * attention_weighted)
 
 # **Step 4: Load CNN Model for Currency Classification**
 with CustomObjectScope({'CentralFocusSpatialAttention': CentralFocusSpatialAttention}):
