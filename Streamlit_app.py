@@ -14,7 +14,9 @@ import os
 import threading
 from keras.utils import register_keras_serializable  
 from tensorflow.keras.utils import get_custom_objects# ✅ Correct for Keras 2.x # ✅ Correct for Keras 2
-
+from tensorflow.keras.layers import Input
+from tensorflow.keras import Model
+# from tensorflow.keras.models import load_model
 # **Step 1: Define Class Names for CNN**
 cnn_classes = ['10 Rupees', '100 Rupees', '20 Rupees', '200 Rupees', '50 Rupees', '500 Rupees']
 
@@ -59,6 +61,10 @@ if "CentralFocusSpatialAttention" not in get_custom_objects():
 # **Step 4: Load CNN Model for Currency Classification**
 with CustomObjectScope({'CentralFocusSpatialAttention': CentralFocusSpatialAttention}):
     cnn_model = load_model('Currency_Detection_model_with_DenseNet121_and_CentralFocusSpatialAttention.h5', compile=False)
+new_input = Input(shape=(224, 224, 3))  # Use `shape` instead of `batch_input_shape`
+
+# ✅ Clone model with new input
+new_model = Model(inputs=new_input, outputs=cnn_model(new_input))
 
 # **Step 5: Helper Functions**
 def encode_image(image):
@@ -111,7 +117,7 @@ if uploaded_file is not None:
         img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
 
         # **Step 11: Run CNN Model for Currency Classification**
-        cnn_prediction = cnn_model.predict(img_array)[0]
+        cnn_prediction = new_model.predict(img_array)[0]
         predicted_class_index = np.argmax(cnn_prediction)
         predicted_class_name = cnn_classes[predicted_class_index]
         confidence = cnn_prediction[predicted_class_index] * 100
