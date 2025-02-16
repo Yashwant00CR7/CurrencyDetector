@@ -1,12 +1,14 @@
 const video = document.getElementById('webcam');
 const canvas = document.getElementById('canvas');
 const captureBtn = document.getElementById('captureBtn');
+const switchCameraBtn = document.getElementById('switchCameraBtn'); // Button to switch cameras
 const status = document.getElementById('status');
 const languageSelector = document.getElementById('languageSelector');
 
 let imageDataList = [];
 let selectedLanguage = 'en'; // Default language is English
 let currencyDetected = false; // Initialize the currencyDetected variable as false
+let isBackCamera = true; // Default to back camera
 
 const messages = {
     en: {
@@ -25,35 +27,40 @@ const messages = {
     }
 };
 
-// Initialize webcam feed
-let isBackCamera = true; // Default to back camera
-
-// Initialize webcam feed and toggle between front/back camera
+// Function to start webcam with selected camera mode
 async function startWebcam() {
-  try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      const video = document.getElementById('webcam');
-      if (!video) {
-          console.error('Video element not found!');
-          return;
-      }
-      video.srcObject = stream;
-      console.log('Webcam access granted.');
-  } catch (error) {
-      console.error('Error accessing webcam:', error.message);
-      alert('Error: Could not access webcam. Please check permissions and browser settings.');
-  }
-}
-// Add event listener for a button to switch cameras
-document.getElementById('switchCameraBtn').addEventListener('click', switchCamera);
+    try {
+        const constraints = {
+            video: {
+                facingMode: isBackCamera ? { exact: "environment" } : "user", // 🔄 Toggle between back and front camera
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
+        };
 
-// Start the webcam on page load
-// startWebcam();
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        if (!video) {
+            console.error('Video element not found!');
+            return;
+        }
+        video.srcObject = stream;
+        console.log(`Webcam access granted. Using ${isBackCamera ? "back" : "front"} camera.`);
+    } catch (error) {
+        console.error('Error accessing webcam:', error.message);
+        alert('Error: Could not access webcam. Please check permissions and browser settings.');
+    }
+}
+
+// Function to switch camera
+function switchCamera() {
+    isBackCamera = !isBackCamera; // Toggle camera
+    startWebcam(); // Restart webcam with new camera mode
+}
 
 // Multilingual Text-to-Speech function
 function speakText(key, additionalText = '') {
     return new Promise((resolve) => {
-        const text = messages[selectedLanguage][key] + (additionalText ? ` ${additionalText}` : '');
+        const text = `${messages[selectedLanguage][key]} ${additionalText ? additionalText : ''}`;
         const speech = new SpeechSynthesisUtterance(text);
         speech.lang = selectedLanguage === 'en' ? 'en-US' : 'ta-IN';
         speech.pitch = 1;
@@ -66,6 +73,11 @@ function speakText(key, additionalText = '') {
 
 // Capture image from webcam and store it
 async function captureImage() {
+    if (!video || !canvas) {
+        console.error('Video or Canvas element not found!');
+        return;
+    }
+
     const ctx = canvas.getContext('2d');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -148,22 +160,36 @@ async function sendImagesToCNNModel() {
         const predictedClass = result.class || 'Unknown';
         const scorePercentage = result.score_percentage || 'N/A';
 
-        status.innerText = `${messages[selectedLanguage].prediction}: ${predictedClass} ${messages[selectedLanguage].withConfidence} ${scorePercentage}`;
+        if (status) {
+            status.innerText = `${messages[selectedLanguage].prediction}: ${predictedClass} ${messages[selectedLanguage].withConfidence} ${scorePercentage}`;
+        }
+        
         await speakText('prediction', `${predictedClass} ${messages[selectedLanguage].withConfidence} ${scorePercentage}`);
     } catch (error) {
         console.error('Error sending images:', error);
-        status.innerText = messages[selectedLanguage].errorSending;
+        if (status) {
+            status.innerText = messages[selectedLanguage].errorSending;
+        }
         await speakText('errorSending');
     }
 }
 
 // Event listener for language selector dropdown
-languageSelector.addEventListener('change', (event) => {
-    selectedLanguage = event.target.value;
-});
+if (languageSelector) {
+    languageSelector.addEventListener('change', (event) => {
+        selectedLanguage = event.target.value;
+    });
+}
 
 // Add event listener for capture button
-captureBtn.addEventListener('click', captureAndCheckImages);
+if (captureBtn) {
+    captureBtn.addEventListener('click', captureAndCheckImages);
+}
+
+// Add event listener for switch camera button
+if (switchCameraBtn) {
+    switchCameraBtn.addEventListener('click', switchCamera);
+}
 
 // Start the webcam on page load
 startWebcam();
