@@ -30,36 +30,20 @@ let isBackCamera = true; // Default to back camera
 
 // Initialize webcam feed and toggle between front/back camera
 async function startWebcam() {
-    try {
-        const constraints = {
-            video: {
-                facingMode: isBackCamera ? { exact: "environment" } : "user", // 🔄 Toggle camera
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            }
-        };
-
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        const video = document.getElementById('webcam');
-        if (!video) {
-            console.error('Video element not found!');
-            return;
-        }
-
-        video.srcObject = stream;
-        console.log(`Webcam access granted. Using ${isBackCamera ? "back" : "front"} camera.`);
-    } catch (error) {
-        console.error('Error accessing webcam:', error.message);
-        alert('Error: Could not access webcam. Please check permissions and browser settings.');
-    }
+  try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = document.getElementById('webcam');
+      if (!video) {
+          console.error('Video element not found!');
+          return;
+      }
+      video.srcObject = stream;
+      console.log('Webcam access granted.');
+  } catch (error) {
+      console.error('Error accessing webcam:', error.message);
+      alert('Error: Could not access webcam. Please check permissions and browser settings.');
+  }
 }
-
-// Function to toggle camera
-function switchCamera() {
-    isBackCamera = !isBackCamera; // 🔄 Toggle between front and back
-    startWebcam(); // Restart webcam with new camera mode
-}
-
 // Add event listener for a button to switch cameras
 document.getElementById('switchCameraBtn').addEventListener('click', switchCamera);
 
