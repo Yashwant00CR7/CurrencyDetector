@@ -18,7 +18,7 @@ This project uses two main models:
 1. **YOLO (You Only Look Once)**: Used to detect the presence of currency in the live video feed.
 2. **CNN (Convolutional Neural Network)**: Trained to classify the detected currency notes into specific denominations.
 
-## [**MODEL DEMO**](https://yashwant00cr7.github.io/CurrencyDetector/) ##
+## [**MODEL DEMO**](https://youtu.be/xf-XroyE7PA) ##
 We are working on developing an app in Flutter and will soon Update the app details in this page. Thank You !
 
 The system works as follows:
