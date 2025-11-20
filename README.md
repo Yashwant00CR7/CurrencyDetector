@@ -4,7 +4,7 @@
 
 ### **Overview**
 In an effort to improve accessibility for visually impaired individuals, this project focuses on creating a **Currency Detection System** that leverages machine learning models to identify and classify currency notes in real-time. The system is designed to provide audio feedback, ensuring that visually impaired users can interact with their environment and receive clear, real-time updates about the currency they encounter.
-## [**CHECK HOW MODEL WORKS**](https://indiancurrencydetector.streamlit.app/) ##
+## [**CHECK HOW MODEL WORKS**](https://indian-currency-detector.streamlit.app/) ##
 We are Still optimizing the model for Object Detection and Currency Identification for frames with no Currency , So please use an Image Consisting of any Indian Currency to test this Model
 
 ### **Introduction**
